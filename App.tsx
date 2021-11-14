@@ -6,7 +6,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import MapView from 'react-native-maps';
+import MapView, {MAP_TYPES, UrlTile} from 'react-native-maps';
 
 const SettingsScreen = () => {
   return (
@@ -17,15 +17,30 @@ const SettingsScreen = () => {
 };
 
 const MapScreen = () => {
+  const ASPECT_RATIO = 400 / 800;
+  const LATITUDE = 50.720555;
+  const LONGITUDE = 19.858633;
+  const LATITUDE_DELTA = 0.0922;
+  const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+
   return (
     <MapView
-      initialRegion={{
-        latitude: 37.78825,
-        longitude: -122.4324,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
+      region={{
+        latitude: LATITUDE,
+        longitude: LONGITUDE,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA,
       }}
-    />
+      style={{flex: 1}}
+      mapType={MAP_TYPES.STANDARD}
+      rotateEnabled={false}
+      provider={null}
+      showsUserLocation>
+      <UrlTile
+        urlTemplate="http://a.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png"
+        maximumZ={19}
+      />
+    </MapView>
   );
 };
 
