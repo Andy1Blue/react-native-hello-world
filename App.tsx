@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, StatusBar} from 'react-native';
 import WebView from 'react-native-webview';
 import styled from 'styled-components';
@@ -6,7 +6,8 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import MapView, {MAP_TYPES, UrlTile} from 'react-native-maps';
+import MapView, {MAP_TYPES, Marker, UrlTile} from 'react-native-maps';
+import Geolocation from '@react-native-community/geolocation';
 
 const SettingsScreen = () => {
   return (
@@ -17,19 +18,25 @@ const SettingsScreen = () => {
 };
 
 const MapScreen = () => {
-  const ASPECT_RATIO = 400 / 800;
-  const LATITUDE = 50.720555;
-  const LONGITUDE = 19.858633;
-  const LATITUDE_DELTA = 0.0922;
-  const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+  const [currentPosition, setCurrentPosition] = useState({
+    latitude: 37.78825,
+    longitude: -122.4324,
+  });
 
+  Geolocation.getCurrentPosition(gps => {
+    console.log(gps);
+    setCurrentPosition({
+      latitude: gps.coords.latitude,
+      longitude: gps.coords.longitude,
+    });
+  });
   return (
     <MapView
       region={{
-        latitude: LATITUDE,
-        longitude: LONGITUDE,
-        latitudeDelta: LATITUDE_DELTA,
-        longitudeDelta: LONGITUDE_DELTA,
+        latitude: currentPosition.latitude,
+        longitude: currentPosition.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
       }}
       style={{flex: 1}}
       mapType={MAP_TYPES.STANDARD}
@@ -37,8 +44,18 @@ const MapScreen = () => {
       provider={null}
       showsUserLocation>
       <UrlTile
-        urlTemplate="http://a.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png"
+        urlTemplate="http://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
         maximumZ={19}
+        flipY={false}
+      />
+      <Marker
+        key={0}
+        coordinate={{
+          latitude: 37.78825,
+          longitude: -122.4324,
+        }}
+        title="Marker title"
+        description="Marker desc"
       />
     </MapView>
   );
